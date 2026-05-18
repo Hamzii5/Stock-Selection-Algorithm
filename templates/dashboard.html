@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Experiment Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <header class="top-header">
+        <div class="brand-box">
+            <div class="brand-icon">∑</div>
+            <div>
+                <h1>Algorithm Analysis Dashboard</h1>
+                <span>CSC 301 · Experimental Analysis</span>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button id="clear-btn" class="secondary-btn">Clear Selection</button>
+            <button id="run-btn" class="primary-btn">Run Experiment</button>
+        </div>
+    </header>
+
+    <main class="main-layout">
+
+        <aside class="sidebar">
+
+            <!-- 1. Select Companies -->
+            <section class="panel">
+                <h3>Select Companies</h3>
+
+                <div class="search-box">
+                    <span>⌕</span>
+                    <input type="text" id="search" placeholder="Search by company name or symbol...">
+                </div>
+
+                <div class="quick-actions">
+                    <button id="select-all-btn">Select Visible</button>
+                    <button id="clear-small-btn">Clear</button>
+                </div>
+            </section>
+
+            <!-- 2. Company List -->
+            <section class="panel list-section">
+                <h3>Company List</h3>
+
+                <div class="company-list custom-scrollbar" id="company-list">
+                    {% for c in companies %}
+                    <label class="company-item" data-name="{{ c.name|lower }}" data-symbol="{{ c.symbol|lower }}">
+                        <input type="checkbox" value="{{ c.symbol }}">
+                        <span>{{ c.name }}</span>
+                        <small>{{ c.symbol }}</small>
+                    </label>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- 3. Selected Companies -->
+            <section class="panel selected-section">
+                <h3>
+                    Selected Companies
+                    <span id="selected-count">0</span>
+                </h3>
+
+                <div class="selected-box custom-scrollbar" id="selected-box">
+                    <div class="empty-selected">No company selected</div>
+                </div>
+            </section>
+
+            <!-- 4. Experiment Settings -->
+            <section class="panel settings-panel">
+                <h3>Experiment Settings</h3>
+
+                <label class="field-label">Input Size (n)</label>
+                <input id="max-n" type="number" min="1" max="200" value="50" class="control-input">
+
+                <div class="form-group">
+                    <label for="custom-budget">Investment Budget:</label>
+                    <input type="number" id="custom-budget" class="form-control" placeholder="Enter budget (e.g. 5000) or leave empty for auto">
+                </div>
+
+                <label class="field-label">Repetitions</label>
+                <input id="repetitions" type="number" min="1" max="20" value="5" class="control-input">
+
+                <label class="field-label">Case Type</label>
+                <select id="case-type" class="control-input">
+                    <option value="average">Average Case</option>
+                    <option value="best">Best Case</option>
+                    <option value="worst">Worst Case</option>
+                </select>
+
+                <label class="toggle-line">
+                    <input id="include-extra" type="checkbox">
+                    <span>Include Brute Force for comparison</span>
+                </label>
+            </section>
+
+        </aside>
+
+        <section class="content custom-scrollbar">
+
+            <div class="cards-grid">
+                <div class="info-card blue-card">
+                    <p>Greedy Family</p>
+                    <h3>Greedy Algorithm</h3>
+                    <span>Select stocks based on highest profit / cost ratio.</span>
+                </div>
+
+                <div class="info-card green-card">
+                    <p>Dynamic Programming</p>
+                    <h3>0/1 Knapsack</h3>
+                    <span>Finds the best profit within budget using DP.</span>
+                </div>
+
+                <div class="info-card amber-card">
+                    <p>Optional Comparison</p>
+                    <h3>Brute Force</h3>
+                    <span>Used for comparison only, stops automatically if n > 18.</span>
+                </div>
+            </div>
+
+            <section class="board-section">
+                <div class="section-header">
+                    <div>
+                        <h2>📊 Graph: Running Time vs Input Size</h2>
+                        <p>Shows average execution time (ms) for each value of n.</p>
+                    </div>
+
+                    <span id="status-badge" class="status-badge">Ready</span>
+                </div>
+
+                <canvas id="time-chart" height="280"></canvas>
+            </section>
+
+            <section class="board-section">
+                <div class="section-header">
+                    <div>
+                        <h2>⚙️ Experiment Setup Info</h2>
+                        <p>Important for report: machine, programming language, timer, repetitions.</p>
+                    </div>
+                </div>
+
+                <div id="setup-info" class="setup-grid">
+                    <div class="empty-state">Run the experiment to display setup info.</div>
+                </div>
+            </section>
+
+            <section class="board-section">
+                <div class="section-header">
+                    <div>
+                        <h2>📈 Experiment & Analysis Table</h2>
+                        <p>Includes n, case, average execution time, best/worst time, and space complexity.</p>
+                    </div>
+                </div>
+
+                <div class="table-wrap custom-scrollbar">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>Case</th>
+                                <th>Algorithm</th>
+                                <th>Family</th>
+                                <th>Avg Time ms</th>
+                                <th>Best ms</th>
+                                <th>Worst ms</th>
+                                <th>Avg Profit</th>
+                                <th>Time</th>
+                                <th>Space</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="results-body">
+                            <tr>
+                                <td colspan="10" class="empty-row">No results yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/static/js/script.js"></script>
+</body>
+</html>
